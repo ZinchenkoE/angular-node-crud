@@ -20,20 +20,18 @@ function authenticate(req, res, next) {
 }
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
-app.use(expressJwt({secret: jwtSecret}).unless({path: ['/login']})); // декодирование jwt
-
+app.use(expressJwt({secret: jwtSecret})); // декодирование jwt
 app.post('/login', authenticate, function(req, res) {
-    var token = jwt.sign({ username: userAdmin.username }, jwtSecret);
-    res.send({ token: token, user: userAdmin });
+    Users.getUserByEmail(req.body.email, function(user){
+        var token = jwt.sign({ email: user.email }, jwtSecret);
+        res.send({ token: token, user: user });
+    });
 });
-
 app.get('/get-users', function(req, res) {
     Users.getAllUsers(function(users) {
         res.json(users);
     });
-    console.log(555);
 });
-
 app.post('/create', function(req, res) {
     Users.create(req.body, function(err, insertedId) {
         if(err){
@@ -62,9 +60,9 @@ app.delete('/delete/:id', function(req, res) {
     });
 });
 
-// app.get('/me', function(req, res) {
-//     res.send(req.user);
-// });
+app.get('/me', function(req, res) {
+    res.send(req.user);
+});
 
 db.connect('mongodb://127.0.0.1:27017/db', function (err) {
     if (err) console.error(err);

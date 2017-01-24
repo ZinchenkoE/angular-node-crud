@@ -11,6 +11,16 @@ exports.getAllUsers = function(cb) {
         }
     })
 };
+exports.getUserByEmail = function(email, cb) {
+    db.get().collection('users').findOne({email: email}).toArray(function(err, doc) {
+        if (err){
+            console.error(err);
+            cb();
+        } else {
+            cb(doc);
+        }
+    })
+};
 exports.create = function createUser(data, cb) {
     var userData = {
         username: data.username,

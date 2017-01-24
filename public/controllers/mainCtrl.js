@@ -2,33 +2,45 @@
     'use strict';
     angular
         .module('app')
-        .controller('MainCtrl', function MainCtrl(UserFactory, $scope, $http) {
-            // console.log('$routeParams.id', $routeParams.id);
-        //     vm.login = function(username, password) {
-        //         UserFactory.login(username, password)
-        //             .then(function success(response) {
-        //                 vm.user = response.data.user;
-        //                 getUsersFromDb();
-        //             }, handleError);
-        //     };
-        //     vm.logout = function() {
-        //         UserFactory.logout();
-        //         vm.user = null;
-        //     };
+        .controller('MainCtrl', function MainCtrl(UserFactory, $scope, $http, $rootScope) {
+
+            $rootScope.$on('$locationChangeStart', function(e){
+                if(!$scope.userIsLogined && location.hash != '#!/login') {
+                    location.hash = '#!/login';
+                    console.log(!$scope.userIsLogined && location.hash != '#!/login');
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+
+
+            $scope.login = function(username, password) {
+                UserFactory.login(username, password)
+                    .then(function() {
+                        $scope.userIsLogined = true;
+                    }, function(err){ console.error(err); });
+            };
+
+            $scope.registration = function(username, password) {
+                UserFactory.registration(username, password)
+                    .then(function() {
+                        $scope.userIsLogined = true;
+                    }, function(err){ console.error(err); });
+            };
+
+
+            $scope.logout = function() {
+                UserFactory.logout();
+                $scope.userIsLogined = false;
+            };
+
             UserFactory.getUser()
-                .then(function success(response) {
-                    location.hash = '!/users';
+                .then(function () {
+                    location.hash = '#!/users';
                 }, function(err) {
-                    location.hash = '!/';
+                    location.hash = '#!/login';
                     console.error(err);
                 });
-        //     $scope.$on('$routeChangeSuccess', function() {
-        //         vm.idEditingUser = $routeParams.id;
-        //         if(vm.idEditingUser){
-        //             var editUser = findUserById(vm.idEditingUser);
-        //             vm.editFormUsername = editUser['username'];
-        //             vm.editFormEmail = editUser['email'];
-        //         }
-        //     });
         });
 })();
