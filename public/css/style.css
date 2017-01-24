@@ -1,0 +1,11 @@
+main{
+    padding-top: 100px;
+}
+.btn-floating{
+	font-size: 30px;
+	margin-top: 50px;
+}
+th, td{
+	min-width: 50px;
+	text-align: center;
+}

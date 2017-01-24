@@ -1,0 +1,8 @@
+<div class="row" ng-controller="EditUserCtrl">
+    <h4 class="center">User id: {{editFormUserId}}</h4>
+    <form ng-submit="editUser()" class="col m4 offset-m4">
+        <input type="text"  id="username" ng-model="editFormUsername" placeholder="Имя"   >
+        <input type="email" id="email"    ng-model="editFormEmail"    placeholder="E-mail">
+        <button type="submit" class="waves-effect waves-light btn">Сохранить</button>
+    </form>
+</div>

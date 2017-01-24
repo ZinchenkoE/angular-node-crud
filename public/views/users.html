@@ -1,0 +1,24 @@
+<table class="striped" ng-controller="EditUserCtrl">
+    <thead>
+        <tr>
+        <th>id</th>
+        <th>Имя</th>
+        <th>E-mail</th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="user in users">
+            <td>{{user._id}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.email}}</td>
+            <td><a class="waves-effect waves-light btn blue-grey" href="#!/users/{{user._id}}">Редактировать</a></td>
+            <td><button class="waves-effect waves-light btn blue-grey" ng-click="delUser(user._id)">Удалить</button></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="row">
+    <a  href="#!/create-user" class="btn-floating btn-large waves-effect waves-light blue-grey right">+</a>
+</div>

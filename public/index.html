@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru" ng-app="app">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Angular</title>
+  <link rel="stylesheet" href="css/materialize.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body ng-controller="MainCtrl">
+
+  <header>
+    <nav>
+      <div class="nav-wrapper blue-grey darken-4 accent-3">
+        <a href="/" class="brand-logo">Тестовое задание по Angular</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="/">Главная</a></li>
+          <li ng-show="!user"><a href="#!/users">Пользователи</a></li>
+          <li ng-show="user"><a ng-click="logout()" >Выйти ({{user.username}})</a></li>
+          <?php endif; ?>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+      <div ng-hide="user" class="row">
+          <h4 class="center">Авторизуйтесь для начала работы</h4>
+          <form ng-submit="login(username, password)" class="col m4 offset-m4">
+              <input  type="text"     id="login"    ng-model="username" placeholder="Логин">
+              <input  type="password" id="password" ng-model="password" placeholder="Пароль">
+              <button type="submit" class="waves-effect waves-light btn">Войти</button>
+          </form>
+      </div>
+      <div ng-if="user" ng-view></div>
+      <div ng-view></div>
+  </main>
+
+
+  <!-- Libs -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.min.js"></script>
+
+  <script src="app.js"></script>
+
+  <!-- Services-->
+  <script src="/services/UserFactory.js"></script>
+  <script src="/services/authTokenFactory.js"></script>
+  <script src="/services/authInterceptorFactory.js"></script>
+
+  <!-- Controllers -->
+  <script src="/controllers/mainCtrl.js"></script>
+  <script src="/controllers/editUserCtrl.js"></script>
+  <script src="/controllers/createUserCtrl.js"></script>
+</body>
+</html>
