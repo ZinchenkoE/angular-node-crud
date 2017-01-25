@@ -17,12 +17,12 @@
       <a href="/" class="brand-logo">Тестовое задание по Angular</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
 
-        <li ng-hide="userIsLogined"><a href="#!/login">Войти</a></li>
-        <li ng-hide="userIsLogined"><a href="#!/registration">Зарегистрироваться</a></li>
+        <li ng-hide="userIsLogged"><a href="#!/login">Войти</a></li>
+        <li ng-hide="userIsLogged"><a href="#!/registration">Зарегистрироваться</a></li>
 
-        <li ng-hide="!userIsLogined"><a href="/">Главная</a></li>
-        <li ng-hide="!userIsLogined"><a href="#!/users">Пользователи</a></li>
-        <li ng-hide="!userIsLogined"><a ng-click="logout()" >Выйти</a></li>
+        <li ng-hide="!userIsLogged"><a href="/">Главная</a></li>
+        <li ng-hide="!userIsLogged"><a href="#!/users">Пользователи</a></li>
+        <li ng-hide="!userIsLogged"><a ng-click="logout()" >Выйти</a></li>
 
       </ul>
     </div>
@@ -38,14 +38,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular-route.min.js"></script>
 
 <script src="app.js"></script>
-
 <!-- Services-->
 <script src="/services/userFactory.js"></script>
 <script src="/services/authTokenFactory.js"></script>
 <script src="/services/authInterceptorFactory.js"></script>
-
-
-
 <!-- Controllers -->
 <script src="/controllers/mainCtrl.js"></script>
 <script src="/controllers/editUserCtrl.js"></script>

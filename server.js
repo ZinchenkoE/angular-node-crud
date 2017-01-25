@@ -1,59 +1,74 @@
-var express    = require('express');
-var bodyParser = require('body-parser');
-var jwt        = require('jsonwebtoken');
-var expressJwt = require('express-jwt');
-var app        = express();
-var db         = require('./db');
-var Users      = require('./model/users');
+var express     = require('express');
+var bodyParser  = require('body-parser');
+var jwt         = require('jsonwebtoken');
+var expressJwt  = require('express-jwt');
+var app         = express();
+var db          = require('./db');
+var Users       = require('./model/users');
 const jwtSecret = 'dsfasf43w3f43f3f;lkv';
 
-const userAdmin = { username: 'admin', password: '12345' };
-
-function authenticate(req, res, next) {
-    if(!req.body.username || !req.body.password) {
-        res.status(400).end('Логин и пароль обязательны к заполнению');
-    }
-    if(req.body.username !== userAdmin.username || req.body.password !== userAdmin.password) {
-        res.status(401).end('Логин и/или пароль неверны');
-    }
-    next();
-}
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
-app.use(expressJwt({secret: jwtSecret})); // декодирование jwt
-app.post('/login', authenticate, function(req, res) {
-    Users.getUserByEmail(req.body.email, function(user){
-        var token = jwt.sign({ email: user.email }, jwtSecret);
-        res.send({ token: token, user: user });
+app.use(expressJwt({secret: jwtSecret}).unless({path: ['/login', '/registration']})); // декодирование jwt
+
+app.post('/login', function(req, res) {
+    Users.login(req.body, function(err, valid, user){
+        if(err) {
+            res.sendStatus(500); console.log('_______1_______');
+        }else if(valid){
+            res.status(valid.status).end(valid.msg);console.log('_______2_______');
+        }else{
+            console.log('_______3_______');
+            var token = jwt.sign({ email: user.email }, jwtSecret);
+            res.send({ token: token, user: user });
+        }
     });
 });
+app.post('/registration', function(req, res) {
+    Users.registration(req.body, function(err, user){
+        if(err){
+            res.sendStatus(500);
+        }else{
+            var token = jwt.sign({ email: user.email }, jwtSecret);
+            res.send({ token: token, user: user });
+        }
+    });
+});
+
+
 app.get('/get-users', function(req, res) {
     Users.getAllUsers(function(users) {
         res.json(users);
     });
 });
 app.post('/create', function(req, res) {
-    Users.create(req.body, function(err, insertedId) {
+    Users.create(req.body, function(err, valid, insertedId) {
         if(err){
             res.sendStatus(500);
+        }else if(valid){
+            res.status(valid.status).end(valid.msg);
         }else{
             res.end(insertedId.toString());
         }
     });
 });
 app.put('/edit', function(req, res) {
-    Users.update(req.body, function(err) {
+    Users.update(req.body, function(err, valid) {
         if(err){
             res.sendStatus(500);
+        }else if(valid){
+            res.status(valid.status).end(valid.msg);
         }else{
             res.sendStatus(200);
         }
     });
 });
 app.delete('/delete/:id', function(req, res) {
-    Users.delete(req.params.id, function(err) {
+    Users.delete(req.params.id, function(err, valid) {
         if(err){
             res.sendStatus(500);
+        }else if(valid){
+            res.status(valid.status).end(valid.msg);
         }else{
             res.sendStatus(200);
         }

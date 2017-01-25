@@ -3,44 +3,50 @@
     angular
         .module('app')
         .controller('MainCtrl', function MainCtrl(UserFactory, $scope, $http, $rootScope) {
+            $scope.userIsLogged = false;
+            $scope.registrationForm = {};
+            $scope.loginForm = {};
 
-            $rootScope.$on('$locationChangeStart', function(e){
-                if(!$scope.userIsLogined && location.hash != '#!/login') {
-                    location.hash = '#!/login';
-                    console.log(!$scope.userIsLogined && location.hash != '#!/login');
-                    e.preventDefault();
-                    return false;
+            $scope.login = function() {
+                UserFactory.login($scope.loginForm.email, $scope.loginForm.password)
+                    .then(function() {
+                        $scope.userIsLogged = true;
+                        location.hash = '#!/';
+                    }, function(err){
+                        console.error(err);
+                        alert(err.data);
+                    });
+            };
+
+            $scope.registration = function() {
+                if($scope.registrationForm.password != $scope.registrationForm.confirmPassword){
+                    alert('Пароли не совпадают');
                 }
-            });
-
-
-
-            $scope.login = function(username, password) {
-                UserFactory.login(username, password)
+                var newUser = {
+                    username: $scope.registrationForm.username,
+                    email:    $scope.registrationForm.email,
+                    password: $scope.registrationForm.password
+                };
+                UserFactory.registration(newUser)
                     .then(function() {
-                        $scope.userIsLogined = true;
+                        $scope.userIsLogged = true;
+                        location.hash = '#!/';
                     }, function(err){ console.error(err); });
             };
-
-            $scope.registration = function(username, password) {
-                UserFactory.registration(username, password)
-                    .then(function() {
-                        $scope.userIsLogined = true;
-                    }, function(err){ console.error(err); });
-            };
-
 
             $scope.logout = function() {
                 UserFactory.logout();
-                $scope.userIsLogined = false;
+                $scope.userIsLogged = false;
+                location.hash = '#!/';
             };
 
             UserFactory.getUser()
                 .then(function () {
-                    location.hash = '#!/users';
+                    $scope.userIsLogged = true;
+                    console.log('getUser success');
                 }, function(err) {
                     location.hash = '#!/login';
-                    console.error(err);
+                    console.error('getUser err', err);
                 });
         });
 })();

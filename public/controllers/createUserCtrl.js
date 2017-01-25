@@ -3,18 +3,18 @@
     angular
         .module('app')
         .controller('CreateUserCtrl', function($scope, $http) {
-            $scope.createFormUsername = '';
-            $scope.createFormEmail = '';
+            $scope.createForm = { email: '', username: '' };
 
             $scope.createUser = function() {
                 var newUser = {
-                    username: $scope.createFormUsername,
-                    email:    $scope.createFormEmail
+                    username: $scope.createForm.username,
+                    email:    $scope.createForm.email
                 };
-                $http.post('/create', newUser).then(function(response) {
+                console.log(234555);
+                $http.post('/create', newUser).then(function success(response) {
                     newUser._id = response.data;
-                    $scope.users.push(newUser);
-                    location.hash = '!/users';
+                    console.log($scope.users);
+                    location.hash = '#!/users';
                 }, function() {
                     alert('Ошибка при создании пользователя.');
                 });

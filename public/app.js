@@ -13,8 +13,7 @@
                     templateUrl: '/views/login.html'
                 })
                 .when('/registration', {
-                    templateUrl: '/views/registration.html',
-                    resolve: true
+                    templateUrl: '/views/registration.html'
                 })
                 .when('/users', {
                     templateUrl: '/views/users.html'

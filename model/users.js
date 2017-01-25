@@ -2,7 +2,7 @@ var db       = require('../db');
 var ObjectID = require('mongodb').ObjectID;
 
 exports.getAllUsers = function(cb) {
-    db.get().collection('users').find().toArray(function(err, doc) {
+    db.get().collection('users').find({}, {password: false}).toArray(function(err, doc) {
         if (err){
             console.error(err);
             cb();
@@ -11,17 +11,45 @@ exports.getAllUsers = function(cb) {
         }
     })
 };
-exports.getUserByEmail = function(email, cb) {
-    db.get().collection('users').findOne({email: email}).toArray(function(err, doc) {
+exports.login = function(data, cb) {
+    if(!data.email || !data.password) {
+        return cb(null, { status: 400, msg: 'Логин и пароль обязательны к заполнению' });
+    }
+
+    db.get().collection('users').findOne({email: data.email}, function(err, user) {
         if (err){
             console.error(err);
-            cb();
+            cb(err);console.log('_______4_______');
         } else {
-            cb(doc);
+            if(!user || data.email !== user.email || data.password !== user.password) {
+                cb(null, { status: 401, msg: 'Логин и/или пароль неверны' });console.log('_______5_______');
+            }else{
+                cb(null, null, user);
+            }
         }
-    })
+    });
+};
+exports.registration = function(data, cb) {
+    // Здесь нужна валидация для данных
+    var userData = {
+        username: data.username,
+        email:    data.email,
+        password: data.password
+    };
+
+    db.get().collection('users').insertOne(userData, function(err, result) {
+        if (err){
+            console.error(err);
+            cb(err);
+        } else {
+            console.log('Зарегистрирован новый пользователь, _id:', result.insertedId);
+            console.log(result.ops[0]);
+            cb(null, result.ops[0]);
+        }
+    });
 };
 exports.create = function createUser(data, cb) {
+    // Здесь нужна валидация для данных
     var userData = {
         username: data.username,
         email:    data.email
@@ -33,12 +61,13 @@ exports.create = function createUser(data, cb) {
             cb(err);
         } else {
             console.log('Создан новый пользователь, _id:', result.insertedId);
-            cb(null, result.insertedId);
+            cb(null, null, result.insertedId);
         }
     });
 };
 exports.update = function updateUser(data, cb) {
-    if(!data._id) return cb('Не указан id пользователя.');
+    // Здесь нужна валидация для данных
+    if(!data._id) return cb(null, { status: 400, msg: 'Не указан id пользователя.' });
 
     var userData = {
         username: data.username,
@@ -51,12 +80,12 @@ exports.update = function updateUser(data, cb) {
             cb(err);
         } else {
             console.log('Пользователь с id' + data.id + ' успешно отредактирован');
-            cb(null, result.insertedId);
+            cb(null);
         }
     });
 };
 exports.delete = function deleteUser(id, cb) {
-    if(!id) return cb('Не указан id пользователя.');
+    if(!id) return cb(null, { status: 400, msg: 'Не указан id пользователя.' });
 
     db.get().collection('users').deleteOne({ _id: ObjectID(id) }, function(err) {
         if (err){
