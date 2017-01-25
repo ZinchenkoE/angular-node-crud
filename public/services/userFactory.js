@@ -9,17 +9,18 @@
                     return $http.post('/login', {
                         email: email,
                         password: password
-                    })
-                        .then(function (response) {
-                            /* При успешном получении токена сохраняем его в Local Storage */
-                            AuthTokenFactory.setToken(response.data.token);
+                    }).then(function (response) {
+                        /* При успешном получении токена сохраняем его в Local Storage */
+                        AuthTokenFactory.setToken(response.data.token);
 
-                            return response;
-                        });
+                        return response;
+                    });
                 },
+
                 logout: function() {
                     AuthTokenFactory.setToken();
                 },
+
                 getUser: function() {
                     if(AuthTokenFactory.getToken()) {
                         return $http.get('/me');
@@ -27,16 +28,16 @@
                         return $q.reject({data: 'Нет токена'});
                     }
                 },
+
                 registration: function(newUser) {
                     return $http.post('/registration', {
                         username: newUser.username,
                         email:    newUser.email,
                         password: newUser.password
-                    })
-                        .then(function (response) {
-                            AuthTokenFactory.setToken(response.data.token);
-                            return response;
-                        });
+                    }).then(function (response) {
+                        AuthTokenFactory.setToken(response.data.token);
+                        return response;
+                    });
                 }
             };
         });

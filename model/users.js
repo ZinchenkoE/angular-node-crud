@@ -11,6 +11,7 @@ exports.getAllUsers = function(cb) {
         }
     })
 };
+
 exports.login = function(data, cb) {
     if(!data.email || !data.password) {
         return cb(null, { status: 400, msg: 'Логин и пароль обязательны к заполнению' });
@@ -19,54 +20,76 @@ exports.login = function(data, cb) {
     db.get().collection('users').findOne({email: data.email}, function(err, user) {
         if (err){
             console.error(err);
-            cb(err);console.log('_______4_______');
+            cb(err);
         } else {
             if(!user || data.email !== user.email || data.password !== user.password) {
-                cb(null, { status: 401, msg: 'Логин и/или пароль неверны' });console.log('_______5_______');
+                cb(null, { status: 401, msg: 'Логин и/или пароль неверны' });
             }else{
                 cb(null, null, user);
             }
         }
     });
 };
+
 exports.registration = function(data, cb) {
-    // Здесь нужна валидация для данных
     var userData = {
         username: data.username,
         email:    data.email,
         password: data.password
     };
 
-    db.get().collection('users').insertOne(userData, function(err, result) {
+    db.get().collection('users').findOne({email: data.email}, function(err, user) {
         if (err){
             console.error(err);
             cb(err);
         } else {
-            console.log('Зарегистрирован новый пользователь, _id:', result.insertedId);
-            console.log(result.ops[0]);
-            cb(null, result.ops[0]);
+            if(user) {
+                cb(null, { status: 400, msg: 'Пользователь с таким email уже существует' });
+            }else{
+                db.get().collection('users').insertOne(userData, function(err, result) {
+                    if (err){
+                        console.error(err);
+                        cb(err);
+                    } else {
+                        console.log('Зарегистрирован новый пользователь, _id:', result.insertedId);
+                        console.log(result.ops[0]);
+                        cb(null, null, result.ops[0]);
+                    }
+                });
+            }
         }
     });
 };
+
 exports.create = function createUser(data, cb) {
-    // Здесь нужна валидация для данных
     var userData = {
         username: data.username,
         email:    data.email
     };
 
-    db.get().collection('users').insertOne(userData, function(err, result) {
+    db.get().collection('users').findOne({email: data.email}, function(err, user) {
         if (err){
             console.error(err);
             cb(err);
         } else {
-            console.log('Создан новый пользователь, _id:', result.insertedId);
-            cb(null, null, result.insertedId);
+            if(user) {
+                cb(null, { status: 400, msg: 'Пользователь с таким email уже существует' });
+            }else{
+                db.get().collection('users').insertOne(userData, function(err, result) {
+                    if (err){
+                        console.error(err);
+                        cb(err);
+                    } else {
+                        console.log('Создан новый пользователь, _id:', result.insertedId);
+                        cb(null, null, result.insertedId);
+                    }
+                });
+            }
         }
     });
 };
+
 exports.update = function updateUser(data, cb) {
-    // Здесь нужна валидация для данных
     if(!data._id) return cb(null, { status: 400, msg: 'Не указан id пользователя.' });
 
     var userData = {
@@ -84,6 +107,7 @@ exports.update = function updateUser(data, cb) {
         }
     });
 };
+
 exports.delete = function deleteUser(id, cb) {
     if(!id) return cb(null, { status: 400, msg: 'Не указан id пользователя.' });
 

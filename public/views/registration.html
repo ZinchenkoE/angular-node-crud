@@ -1,10 +1,10 @@
 <div class="row">
     <h5 class="center">Зарегистрируйтесь чтоб иметь возможность войти в систему</h5>
     <form ng-submit="registration()" class="col m4 offset-m4">
-        <input  type="email"    ng-model="registrationForm.email"           placeholder="Логин(e-mail)">
-        <input  type="text"     ng-model="registrationForm.username"        placeholder="Имя">
-        <input  type="password" ng-model="registrationForm.password"        placeholder="Пароль">
-        <input  type="password" ng-model="registrationForm.confirmPassword" placeholder="Подтверждение пароля">
+        <input  type="email"    ng-model="registrationForm.email"           required placeholder="Логин(e-mail)">
+        <input  type="text"     ng-model="registrationForm.username"        required placeholder="Имя">
+        <input  type="password" ng-model="registrationForm.password"        required placeholder="Пароль">
+        <input  type="password" ng-model="registrationForm.confirmPassword" required placeholder="Подтверждение пароля">
         <button type="submit" class="waves-effect waves-light btn">Зарегистрироваться</button>
     </form>
 </div>

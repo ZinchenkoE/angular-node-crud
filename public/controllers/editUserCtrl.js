@@ -17,8 +17,6 @@
                 location.hash = '#!/login';
             });
 
-
-
             $scope.editUser = function() {
                 var data = {
                     _id:      $scope.editForm.userId,

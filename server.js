@@ -9,25 +9,14 @@ const jwtSecret = 'dsfasf43w3f43f3f;lkv';
 
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
-app.use(expressJwt({secret: jwtSecret}).unless({path: ['/login', '/registration']})); // декодирование jwt
+app.use(expressJwt({secret: jwtSecret}).unless({path: ['/login', '/registration']}));
 
 app.post('/login', function(req, res) {
     Users.login(req.body, function(err, valid, user){
         if(err) {
-            res.sendStatus(500); console.log('_______1_______');
-        }else if(valid){
-            res.status(valid.status).end(valid.msg);console.log('_______2_______');
-        }else{
-            console.log('_______3_______');
-            var token = jwt.sign({ email: user.email }, jwtSecret);
-            res.send({ token: token, user: user });
-        }
-    });
-});
-app.post('/registration', function(req, res) {
-    Users.registration(req.body, function(err, user){
-        if(err){
             res.sendStatus(500);
+        }else if(valid){
+            res.status(valid.status).end(valid.msg);
         }else{
             var token = jwt.sign({ email: user.email }, jwtSecret);
             res.send({ token: token, user: user });
@@ -35,12 +24,25 @@ app.post('/registration', function(req, res) {
     });
 });
 
+app.post('/registration', function(req, res) {
+    Users.registration(req.body, function(err, valid, user){
+        if(err){
+            res.sendStatus(500);
+        }else if(valid){
+            res.status(valid.status).end(valid.msg);
+        }else{
+            var token = jwt.sign({ email: user.email }, jwtSecret);
+            res.send({ token: token, user: user });
+        }
+    });
+});
 
 app.get('/get-users', function(req, res) {
     Users.getAllUsers(function(users) {
         res.json(users);
     });
 });
+
 app.post('/create', function(req, res) {
     Users.create(req.body, function(err, valid, insertedId) {
         if(err){
@@ -52,6 +54,7 @@ app.post('/create', function(req, res) {
         }
     });
 });
+
 app.put('/edit', function(req, res) {
     Users.update(req.body, function(err, valid) {
         if(err){
@@ -63,6 +66,7 @@ app.put('/edit', function(req, res) {
         }
     });
 });
+
 app.delete('/delete/:id', function(req, res) {
     Users.delete(req.params.id, function(err, valid) {
         if(err){

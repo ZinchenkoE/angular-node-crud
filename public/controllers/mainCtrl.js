@@ -2,7 +2,7 @@
     'use strict';
     angular
         .module('app')
-        .controller('MainCtrl', function MainCtrl(UserFactory, $scope, $http, $rootScope) {
+        .controller('MainCtrl', function MainCtrl(UserFactory, $scope) {
             $scope.userIsLogged = false;
             $scope.registrationForm = {};
             $scope.loginForm = {};
@@ -21,6 +21,7 @@
             $scope.registration = function() {
                 if($scope.registrationForm.password != $scope.registrationForm.confirmPassword){
                     alert('Пароли не совпадают');
+                    return false;
                 }
                 var newUser = {
                     username: $scope.registrationForm.username,
@@ -31,7 +32,13 @@
                     .then(function() {
                         $scope.userIsLogged = true;
                         location.hash = '#!/';
-                    }, function(err){ console.error(err); });
+                    }, function(res) {
+                        if(res.status == 400){
+                            alert(res.data);
+                        }else{
+                            alert('Произошла ошибка при регистрации');
+                        }
+                    });
             };
 
             $scope.logout = function() {

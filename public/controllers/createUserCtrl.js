@@ -10,13 +10,15 @@
                     username: $scope.createForm.username,
                     email:    $scope.createForm.email
                 };
-                console.log(234555);
                 $http.post('/create', newUser).then(function success(response) {
                     newUser._id = response.data;
-                    console.log($scope.users);
                     location.hash = '#!/users';
-                }, function() {
-                    alert('Ошибка при создании пользователя.');
+                }, function(res) {
+                    if(res.status == 400){
+                        alert(res.data);
+                    }else{
+                        alert('Ошибка при создании пользователя.');
+                    }
                 });
             };
 
